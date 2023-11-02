@@ -6,22 +6,15 @@ type Props = {
 };
 
 function CasillaComponent({ data }: Props) {
-  const [dataCasilla, setdataCasilla] = useState<ICasilla>(data);
-  const { positionX, positionY, status } = dataCasilla;
-
-  const activeState = () =>
-    setdataCasilla({ ...dataCasilla, status: "active" });
 
   return (
     <div
-      onClick={() => activeState()}
-      className={`w-11 h-11 ${
-        dataCasilla.status == "active"
-          ? "bg-red-200 hover:bg-red-300"
-          : "bg-gray-200 hover:bg-gray-300"
-      } p-2 border border-black  cursor-pointer`}
+      onClick={() => { }}
+      className={`w-11 h-11
+       
+         p-2 border border-black  cursor-pointer`}
     >
-      <p className="text-center">{`[${positionX},${positionY}]`}</p>
+      {/* <p className={`text-center ${type == "silly" ? "border-2 border-red-400" : ""}`}>{`${positionX},${positionY}`}</p> */}
     </div>
   );
 }
