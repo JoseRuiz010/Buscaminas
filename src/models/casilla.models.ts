@@ -4,30 +4,36 @@ export class Casilla {
   private positionX: number;
   private positionY: number;
   private type: type_Casilla;
-  private isBomba: Boolean;
-  private status: status_Casilla;
-
+  private isBomba: boolean;
+  status: status_Casilla;
+  public cantidadBomba: number;
 
   constructor(
     positionX: number = 0,
     positionY: number = 0,
-    type: type_Casilla = 'normal',
+    type: type_Casilla = "normal",
     status: status_Casilla = "desactive",
     isBomba = false,
+    cantidadBomba: number = 0
   ) {
     this.positionX = positionX;
     this.positionY = positionY;
     this.type = type;
-    this.isBomba = isBomba,
-      this.status = status
+    (this.isBomba = isBomba), (this.status = status);
+    this.cantidadBomba = cantidadBomba;
   }
   desactivar(): void {
-    this.status = 'desactive'
+    this.status = "desactive";
   }
   activar(): void {
-    this.status = 'active'
+    this.status = "active";
   }
   setBomba(): void {
-    this.isBomba = true
+    this.isBomba = true;
   }
+  x = () => this.positionX;
+  y = () => this.positionY;
+  tipo = () => this.type;
+  isSilly = () => this.isBomba;
+  active = () => this.status;
 }
