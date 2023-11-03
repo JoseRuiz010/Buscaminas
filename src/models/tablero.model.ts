@@ -1,76 +1,101 @@
-import { generate_number } from "../utils/random_numbers";
 import { Casilla } from "./casilla.models";
-
+import { generateRandomNumber } from "../utils/random_numbers";
+export enum GameState {
+  NotStarted,
+  Playing,
+  Victory,
+  Defeat,
+  Paused,
+}
 export class Tablero {
+
+  public get time(): number {
+    return this._time;
+  }
+  public set time(value: number) {
+    this._time = value;
+  }
+  public get status_game(): GameState {
+    return this._status_game;
+  }
+  public set status_game(value: GameState) {
+    this._status_game = value;
+  }
+  public start_game() {
+    this._status_game = GameState.Playing;
+  }
+
+  public casilla_is_Silly(x: number, y: number) {
+    return this.getTablero()[x][y].isSilly()
+  }
+
   private matriz_tablero: Casilla[][] = [];
-  private time: number;
-  private cantidad_casilla: number;
-  cantidad_bombas: number;
 
   constructor(
-    time: number,
-    cantidad_casilla: number = 4,
-    cantidad_bombas: number = 3
+    private _time: number,
+    private cantidad_casilla: number = 4,
+    private cantidad_bombas: number = 3,
+    private _status_game: GameState = GameState.NotStarted
   ) {
-    this.time = time;
-    this.cantidad_casilla = cantidad_casilla;
-    this.cantidad_bombas = cantidad_bombas;
-    this.matriz_tablero = this.generarMatrizCuadrada();
-    this.cargarBombas();
-    this.agregarCantBomba()
+    this.init();
   }
 
-  private generarMatrizCuadrada(): Casilla[][] {
-    const matriz: Casilla[][] = [];
-
-    for (let i = 0; i < this.cantidad_casilla; i++) {
-      matriz[i] = new Array(this.cantidad_casilla);
-
-      for (let j = 0; j < this.cantidad_casilla; j++) {
-        matriz[i][j] = new Casilla(i, j);
-      }
-    }
-    return matriz;
-  }
-  private agregarCantBomba = () => {
-    const arrBomba: Casilla[] = [];
-    for (let i = 0; i < this.cantidad_casilla; i++) {
-      //console.log(this.getTablero()[i]);
-      for (let j = 0; j < this.cantidad_casilla; j++) {
-        let casilla = this.getTablero()[i][j]
-        if (casilla.isSilly()) {
-          arrBomba.push(casilla)
-        }
-      }
-    }
-    for (let i = 0; i < arrBomba.length; i++) {
-      const currentCasilla = arrBomba[i];
-      for (let j = -1; j <= 1; j++) {
-        for (let k = -1; k <= 1; k++) {
-          const valX = currentCasilla.x() + j;
-          const valY = currentCasilla.y() + k;
-          if ((valX >= 0 && valY >= 0 && (valX < this.cantidad_casilla && valY < this.cantidad_casilla))) {
-            this.getTablero()[valX][valY].cantidadBomba = this.getTablero()[valX][valY].cantidadBomba + 1;
-          }
-
-        }
-
-      }
-
-    }
-
-
+  private init(): void {
+    this.generateSquareMatrix();
+    this.placeBombs();
+    this.calculateAdjacentBombCounts();
   }
 
+  private generateSquareMatrix(): void {
+    this.matriz_tablero = new Array(this.cantidad_casilla)
+      .fill(null)
+      .map((_, i) => new Array(this.cantidad_casilla)
+        .fill(null)
+        .map((_, j) => new Casilla(i, j))
+      );
+  }
 
-  private cargarBombas = () => {
+  private placeBombs(): void {
     for (let i = 0; i < this.cantidad_bombas; i++) {
-      const x = generate_number(0, 7);
-      const y = generate_number(0, 7);
+      const x = generateRandomNumber(0, this.cantidad_casilla - 1);
+      const y = generateRandomNumber(0, this.cantidad_casilla - 1);
       this.matriz_tablero[x][y].setBomba();
-      console.log({ x, y });
     }
-  };
+  }
 
-  getTablero = (): Casilla[][] => this.matriz_tablero;
+  private calculateAdjacentBombCounts(): void {
+    for (let i = 0; i < this.cantidad_casilla; i++) {
+      for (let j = 0; j < this.cantidad_casilla; j++) {
+        const currentCasilla = this.matriz_tablero[i][j];
+        if (currentCasilla.isSilly()) {
+          for (let dx = -1; dx <= 1; dx++) {
+            for (let dy = -1; dy <= 1; dy++) {
+              const adjacentX = i + dx;
+              const adjacentY = j + dy;
+              if (
+                adjacentX >= 0 &&
+                adjacentY >= 0 &&
+                adjacentX < this.cantidad_casilla &&
+                adjacentY < this.cantidad_casilla
+              ) {
+                this.matriz_tablero[adjacentX][adjacentY].cantidadBomba++;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  getTablero(): Casilla[][] {
+    return this.matriz_tablero;
+  }
+
+  public copy(): Tablero {
+    const copiedTablero = new Tablero(this._time, this.cantidad_casilla, this.cantidad_bombas, this._status_game);
+    // Copia la matriz de casillas
+    copiedTablero.matriz_tablero = this.matriz_tablero
+
+    return copiedTablero;
+  }
 }

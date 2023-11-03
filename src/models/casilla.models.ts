@@ -1,5 +1,7 @@
 export type type_Casilla = "silly" | "normal";
-export type status_Casilla = "active" | "desactive";
+export type status_Casilla = "active" | "desactive" | "flag";
+export type status_Tablero = "active" | "desactive";
+
 export class Casilla {
   private positionX: number;
   private positionY: number;
@@ -30,6 +32,9 @@ export class Casilla {
   }
   setBomba(): void {
     this.isBomba = true;
+  }
+  setFlag(): void {
+    this.status = "flag"
   }
   x = () => this.positionX;
   y = () => this.positionY;
