@@ -1,3 +1,4 @@
+import { generate_number } from "../utils/random_numbers";
 import { Casilla } from "./casilla.models";
 
 export class Tablero {
@@ -64,9 +65,10 @@ export class Tablero {
 
   private cargarBombas = () => {
     for (let i = 0; i < this.cantidad_bombas; i++) {
-      const x = Math.floor(Math.random() * 4);
-      const y = Math.floor(Math.random() * 4);
+      const x = generate_number(0, 7);
+      const y = generate_number(0, 7);
       this.matriz_tablero[x][y].setBomba();
+      console.log({ x, y });
     }
   };
 
