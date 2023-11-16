@@ -7,6 +7,11 @@ export enum GameState {
   Defeat,
   Paused,
 }
+export enum state_cronometro {
+  START,
+  STOP,
+  RESTART
+}
 export class Tablero {
 
   public get time(): number {

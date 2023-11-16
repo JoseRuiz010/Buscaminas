@@ -1,3 +1,4 @@
+
 import TablaComponent from "./components/Tablero";
 
 const App = () => {
