@@ -10,10 +10,9 @@ export enum GameState {
 export enum state_cronometro {
   START,
   STOP,
-  RESTART
+  RESTART,
 }
 export class Tablero {
-
   public get time(): number {
     return this._time;
   }
@@ -31,7 +30,7 @@ export class Tablero {
   }
 
   public casilla_is_Silly(x: number, y: number) {
-    return this.getTablero()[x][y].isSilly()
+    return this.getTablero()[x][y].isSilly();
   }
 
   private matriz_tablero: Casilla[][] = [];
@@ -54,9 +53,10 @@ export class Tablero {
   private generateSquareMatrix(): void {
     this.matriz_tablero = new Array(this.cantidad_casilla)
       .fill(null)
-      .map((_, i) => new Array(this.cantidad_casilla)
-        .fill(null)
-        .map((_, j) => new Casilla(i, j))
+      .map((_, i) =>
+        new Array(this.cantidad_casilla)
+          .fill(null)
+          .map((_, j) => new Casilla(i, j))
       );
   }
 
@@ -97,9 +97,14 @@ export class Tablero {
   }
 
   public copy(): Tablero {
-    const copiedTablero = new Tablero(this._time, this.cantidad_casilla, this.cantidad_bombas, this._status_game);
+    const copiedTablero = new Tablero(
+      this._time,
+      this.cantidad_casilla,
+      this.cantidad_bombas,
+      this._status_game
+    );
     // Copia la matriz de casillas
-    copiedTablero.matriz_tablero = this.matriz_tablero
+    copiedTablero.matriz_tablero = this.matriz_tablero;
 
     return copiedTablero;
   }

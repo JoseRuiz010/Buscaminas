@@ -1,14 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import { ITimer } from "../models/interfaces/ITime";
 
-function Cronometro({ corriendo = false, restart = false }) {
+function Cronometro({
+  corriendo = false,
+  restart = false,
+  handleTiempoChange = (props: ITimer) => {},
+}) {
   const [segundos, setSegundos] = useState(0);
   const [minutos, setMinutos] = useState(0);
   const [horas, setHoras] = useState(0);
 
-
   useEffect(() => {
     let intervalId;
-    if (restart) reiniciarCronometro()
+    if (restart) reiniciarCronometro();
 
     if (corriendo) {
       intervalId = setInterval(() => {
@@ -25,6 +29,7 @@ function Cronometro({ corriendo = false, restart = false }) {
         }
       }, 1000);
     } else {
+      handleTiempoChange({ horas, minutos, segundos });
       clearInterval(intervalId);
     }
 
@@ -39,7 +44,7 @@ function Cronometro({ corriendo = false, restart = false }) {
   };
   return (
     <div>
-      <div>
+      <div className="font-bold text-white border border-gray-500 p-2">
         <span>{horas < 10 ? `0${horas}` : horas}</span>:
         <span>{minutos < 10 ? `0${minutos}` : minutos}</span>:
         <span>{segundos < 10 ? `0${segundos}` : segundos}</span>
