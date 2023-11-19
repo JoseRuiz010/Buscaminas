@@ -13,6 +13,12 @@ export enum state_cronometro {
   RESTART,
 }
 export class Tablero {
+  public get cantidad_bombas(): number {
+    return this._cantidad_bombas;
+  }
+  public set cantidad_bombas(value: number) {
+    this._cantidad_bombas = value;
+  }
   public get time(): number {
     return this._time;
   }
@@ -38,7 +44,7 @@ export class Tablero {
   constructor(
     private _time: number,
     private cantidad_casilla: number = 4,
-    private cantidad_bombas: number = 3,
+    private _cantidad_bombas: number = 3,
     private _status_game: GameState = GameState.NotStarted
   ) {
     this.init();

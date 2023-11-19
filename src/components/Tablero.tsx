@@ -1,22 +1,12 @@
 import { useEffect, useState } from "react";
-import { GameState, Tablero, state_cronometro } from "../models/tablero.model";
+import { GameState, Tablero } from "../models/tablero.model";
 import CasillaComponent from "./Casilla";
-import Cronometro from "./Cronometro";
 import { CustomSwal } from "./messages/CustomSwal";
-import { ITimer } from "../models/interfaces/ITime";
+import { useCronometro } from "../hooks/useCronometro";
 
 const TablaComponent = () => {
-  const [tabla, settabla] = useState(new Tablero(10, 8, 10));
-  const [start, setstart] = useState<state_cronometro>(state_cronometro.STOP);
-  const [tiempo, setTiempo] = useState<ITimer>({
-    horas: 0,
-    minutos: 0,
-    segundos: 0,
-  });
-
-  const play = () => setstart(state_cronometro.START);
-  const stop = () => setstart(state_cronometro.STOP);
-  const restart = () => setstart(state_cronometro.RESTART);
+  const [tabla, settabla] = useState(new Tablero(10, 5, 2));
+  const { state, iniciarPausar, reiniciar } = useCronometro();
 
   const changeStatusCasilla = (x: number, y: number, flag: boolean = false) => {
     settabla((prev) => {
@@ -25,7 +15,6 @@ const TablaComponent = () => {
         newTablero.getTablero()[x][y].activar();
         if (newTablero.casilla_is_Silly(x, y)) {
           newTablero.status_game = GameState.Defeat;
-          restart();
         }
       } else {
         newTablero.getTablero()[x][y].setFlag();
@@ -44,47 +33,49 @@ const TablaComponent = () => {
       onAbandonarJuego
     );
   };
-  const handleTiempoChange = ({ horas, minutos, segundos }: ITimer) => {
-    setTiempo({ horas: horas, minutos: minutos, segundos: segundos });
+  const iniciarJuego = () => {
+    settabla(new Tablero(1, 5, 1));
+    reiniciar();
+    iniciarPausar();
   };
 
+  const onAbandonarJuego = () => {
+    settabla(new Tablero(1, 5, 1));
+    reiniciar();
+  };
   useEffect(() => {
     CustomSwal(
       {
-        title: "Iniciar Juego",
+        title: "Pulsa iniciar para jugar",
         confirmButtonText: "Iniciar",
       },
-      play
+      iniciarJuego
     );
   }, []);
-
   useEffect(() => {
     if (tabla.status_game == GameState.Defeat) {
+      iniciarPausar();
       CustomSwal(
         {
-          title: "Game Over!!",
+          title: "Fin del juego",
+          confirmButtonText: "Reintentar",
+          showCancelButton: true,
+          cancelButtonText: "Cancelar",
           icon: "error",
         },
-        play
+        iniciarJuego,
+        onAbandonarJuego
       );
     }
-  }, [start]);
-  const onAbandonarJuego = () => {
-    restart();
-    settabla(new Tablero(10, 8, 10));
-  };
+  }, [tabla.status_game]);
 
   return (
     <main className={`bg-red-50 w-min border border-black mx-auto`}>
       {tabla.status_game === GameState.Defeat && <div>FIN</div>}
 
       <div className="flex justify-between bg-gray-400 p-1 py-4">
-        <Cronometro
-          handleTiempoChange={handleTiempoChange}
-          corriendo={start == state_cronometro.START ? true : false}
-          restart={start == state_cronometro.RESTART}
-        />
-        {start == state_cronometro.START && (
+        <span>{state.currentTime}</span>
+        {state.isRunning && (
           <button
             className="bg-red-800 p-2 rounded-md text-white"
             onClick={changeStatusTable}
@@ -92,16 +83,16 @@ const TablaComponent = () => {
             Abandonar
           </button>
         )}
-        {start !== state_cronometro.START && (
+        {!state.isRunning && (
           <button
             className="bg-green-800 p-2 rounded-md text-white"
-            onClick={play}
+            onClick={iniciarJuego}
           >
             Iniciar
           </button>
         )}
         <div className=" my-auto">
-          <label className="">{`08🎃`}</label>
+          <label className="">{`${tabla.cantidad_bombas}🎃`}</label>
         </div>
       </div>
       {tabla.getTablero().map((ca, i) => (

@@ -4,6 +4,7 @@ const App = () => {
     <div className="bg-slate-400 ">
       <h1 className="font-bold text-center text-4xl my-4">Tablero</h1>
       <TablaComponent />
+      {/* <CronometroComponent /> */}
     </div>
   );
 };
